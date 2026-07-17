@@ -16,6 +16,9 @@ export interface ScriptLine {
   speaker: string;
   text: string;
   style: 'dialogue' | 'action' | 'music' | 'note';
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video';
+  mediaCaption?: string;
 }
 
 export const SHOW_TITLE = "MR CHAPS' DANCE MASTERCLASS";

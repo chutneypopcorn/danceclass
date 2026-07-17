@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { showSections } from '../data/showData';
 import type { SectionTimestamp } from '../hooks/useAudioManager';
 import {
-  Volume2, VolumeX, Mic, Music, Upload,
+  Volume2, VolumeX, Music, Upload,
   Headphones, Play, Trash2, Clock,
 } from 'lucide-react';
 

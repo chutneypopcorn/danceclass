@@ -113,10 +113,6 @@ function App() {
     }
   };
 
-  const currentAudio = sectionAudios[effectiveSectionIndex];
-  const hasCurrentAudio = currentAudio?.voiceUrl || currentAudio?.musicUrl;
-  const isCurrentSectionPlaying = currentPlayingSection === effectiveSectionIndex && isAudioPlaying;
-
   return (
     <div className="h-screen w-screen bg-zinc-950 flex flex-col overflow-hidden">
       {/* TOP BAR */}
@@ -131,13 +127,13 @@ function App() {
               <p className="text-[10px] text-zinc-500 leading-tight">{SHOW_SUBTITLE}</p>
             </div>
           </div>
-          {isAudioPlaying && (
+          {isPlaying && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20">
               <div className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
               <span className="text-[10px] font-bold text-pink-400 tracking-wider">PLAYING</span>
             </div>
           )}
-          {masterTrack && !isAudioPlaying && (
+          {masterTrack && !isPlaying && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <Music className="w-3 h-3 text-emerald-400" />
               <span className="text-[10px] font-bold text-emerald-400 tracking-wider">TRACK LOADED</span>
@@ -196,11 +192,6 @@ function App() {
                   <Music className="w-3 h-3" />
                   {currentSection.backingTrack}
                 </div>
-                <button onClick={() => { if (isCurrentSectionPlaying) stopAudio(); else if (hasCurrentAudio) playSection(effectiveSectionIndex); }} disabled={!hasCurrentAudio}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30 ${isCurrentSectionPlaying ? 'bg-red-500/20 text-red-400' : 'bg-pink-500/20 text-pink-400'}`}>
-                  {isCurrentSectionPlaying ? <Square className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                  {isCurrentSectionPlaying ? 'STOP' : 'PLAY'}
-                </button>
               </div>
             </div>
           </div>

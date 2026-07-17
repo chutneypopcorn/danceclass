@@ -108,34 +108,6 @@ function App() {
     }
   }, [currentTime, sectionTimestamps, isPlaying, manualSectionIndex]);
 
-  const getLineStyle = (style: string) => {
-    switch (style) {
-      case 'dialogue': return 'dialogue-text text-white';
-      case 'action': return 'action-text text-zinc-400';
-      case 'music': return 'music-text text-pink-400';
-      case 'note': return 'note-text text-amber-400';
-      default: return 'teleprompter-text text-zinc-300';
-    }
-  };
-
-  const getSpeakerColor = (speaker: string) => {
-    switch (speaker) {
-      case 'MR CHAPS': return 'text-pink-400';
-      case 'STAGE': return 'text-zinc-500';
-      case 'NOTE': return 'text-amber-500';
-      default: return 'text-zinc-400';
-    }
-  };
-
-  const getSpeakerIcon = (speaker: string) => {
-    switch (speaker) {
-      case 'MR CHAPS': return <Mic2 className="w-4 h-4" />;
-      case 'STAGE': return <Sparkles className="w-4 h-4" />;
-      case 'NOTE': return <Volume2 className="w-4 h-4" />;
-      default: return <Music className="w-4 h-4" />;
-    }
-  };
-
   // Determine main button state
   const getButtonState = () => {
     if (!isReady) return { text: 'START SHOW', icon: <Play className="w-4 h-4" />, disabled: true };

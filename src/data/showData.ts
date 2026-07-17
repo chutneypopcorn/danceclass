@@ -35,9 +35,9 @@ export const DEFAULT_SECTION_TIMESTAMPS: number[] = [
   108,  // 03 - KALA CHASHMA    (01:48)
   165,  // 04 - WHAT JHUMKA     (02:45)
   229,  // 05 - EK PAL KA JEENA (03:49)
-  195,  // 06 - PIYA PIYA       (03:15)
-  215,  // 07 - THE RETIREMENT  (03:35)
-  230,  // 08 - THE FRENZY      (03:50)
+  239,  // 06 - PIYA PIYA       (03:15)
+  245,  // 07 - THE RETIREMENT  (03:35)
+  250,  // 08 - THE FRENZY      (03:50)
   260,  // 09 - AKASH NUMBER    (04:20)
   285,  // 10 - ASHA BHOSLE FINALE (04:45)
 ];
@@ -88,7 +88,7 @@ export const showSections: ShowSection[] = [
     script: [
       { speaker: 'MR CHAPS', text: "One more time. Cross your arms, pump your fist. Slash, slash. Toot, toot. Five, six, seven, eight.'", style: 'dialogue' },
       { speaker: 'STAGE', text: 'Dancers and audience perform one chorus of Shava Shava.', style: 'music' },
-      { speaker: 'MR CHAPS', text: "Stunning. Some of you have main character energy. Now, who wants to learn to actually SLAY a hook step?", style: 'dialogue' },
+      { speaker: 'MR CHAPS', text: "Stunning! Some of you have main character energy. Now, who wants to learn to actually SLAY a hook step?", style: 'dialogue' },
     ]
   },
   {
@@ -99,7 +99,7 @@ export const showSections: ShowSection[] = [
     bpm: 106,
     defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[3],
     backingTrack: 'Zindagi Meri Dance → Kala Chashma blend',
-    song: 'What Jhumka',
+    song: 'Kala Chashma',
     songNote: 'Chorus x2 — audience dances along',
     triggerColor: 'from-emerald-500 to-teal-600',
     script: [

@@ -16,7 +16,8 @@ function App() {
 
   const {
     masterTrack, sectionTimestamps, isPlaying, currentTime, duration,
-    volume, currentSectionIndex, loadMasterTrack, removeMasterTrack,
+    volume, currentSectionIndex, isReady,
+    loadMasterTrack, loadEmbeddedTrack, removeMasterTrack,
     play, pause, stop, seekTo, seekToSection, updateTimestamp,
     togglePlayPause, setVolume,
   } = useAudioManager(showSections.length);
@@ -24,6 +25,11 @@ function App() {
   const [manualSectionIndex, setManualSectionIndex] = useState<number | null>(null);
   const effectiveSectionIndex = manualSectionIndex ?? currentSectionIndex;
   const currentSection: ShowSection = showSections[effectiveSectionIndex];
+
+  // Try to load embedded track on mount
+  useEffect(() => {
+    loadEmbeddedTrack();
+  }, [loadEmbeddedTrack]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -54,8 +60,8 @@ function App() {
 
   const toggleShow = useCallback(() => {
     if (isShowLive) { setIsShowLive(false); pause(); }
-    else { setIsShowLive(true); setElapsedTime(0); setManualSectionIndex(null); if (masterTrack) play(); }
-  }, [isShowLive, pause, play, masterTrack]);
+    else { setIsShowLive(true); setElapsedTime(0); setManualSectionIndex(null); if (isReady) play(); }
+  }, [isShowLive, pause, play, isReady]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); setIsFullscreen(true); }
@@ -133,10 +139,10 @@ function App() {
               <span className="text-[10px] font-bold text-pink-400 tracking-wider">PLAYING</span>
             </div>
           )}
-          {masterTrack && !isPlaying && (
+          {isReady && !isPlaying && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <Music className="w-3 h-3 text-emerald-400" />
-              <span className="text-[10px] font-bold text-emerald-400 tracking-wider">TRACK LOADED</span>
+              <span className="text-[10px] font-bold text-emerald-400 tracking-wider">TRACK READY</span>
             </div>
           )}
         </div>
@@ -150,7 +156,7 @@ function App() {
             <Timer className="w-4 h-4 text-zinc-400" />
             <span className="text-lg font-mono font-bold text-zinc-300">{formatTime(elapsedTime)}</span>
           </div>
-          <button onClick={toggleShow} className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${isShowLive ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'}`}>
+          <button onClick={toggleShow} className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${isShowLive ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : isReady ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'}`} disabled={!isReady}>
             {isShowLive ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             {isShowLive ? 'END SHOW' : 'START SHOW'}
           </button>

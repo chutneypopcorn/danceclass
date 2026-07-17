@@ -10,6 +10,7 @@ export function useAudioManager(sectionCount: number) {
     url: string;
     fileName: string;
     duration: number;
+    isEmbedded: boolean;
   } | null>(null);
 
   const [sectionTimestamps, setSectionTimestamps] = useState<SectionTimestamp[]>(() =>
@@ -24,6 +25,7 @@ export function useAudioManager(sectionCount: number) {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -45,15 +47,37 @@ export function useAudioManager(sectionCount: number) {
     setCurrentSectionIndex(section);
   }, [currentTime, sectionTimestamps, isPlaying]);
 
+  // Initialize audio element from a URL string
+  const initAudioFromUrl = useCallback((url: string, fileName: string, isEmbedded: boolean) => {
+    const tempAudio = new Audio(url);
+    tempAudio.addEventListener('loadedmetadata', () => {
+      setDuration(tempAudio.duration);
+      setMasterTrack({ url, fileName, duration: tempAudio.duration, isEmbedded });
+      const spacing = tempAudio.duration / sectionCount;
+      setSectionTimestamps(Array.from({ length: sectionCount }, (_, i) => ({ sectionIndex: i, time: i * spacing })));
+      setIsReady(true);
+    });
+    tempAudio.addEventListener('error', () => {
+      console.warn(`Failed to load audio from ${url}`);
+      setIsReady(false);
+    });
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
+    const audio = new Audio(url);
+    audio.volume = volume;
+    audioRef.current = audio;
+  }, [sectionCount, volume]);
+
+  // Load from a File object (user upload)
   const loadMasterTrack = useCallback((file: File) => {
-    if (masterTrack?.url) URL.revokeObjectURL(masterTrack.url);
+    if (masterTrack?.url && !masterTrack.isEmbedded) URL.revokeObjectURL(masterTrack.url);
     const url = URL.createObjectURL(file);
     const tempAudio = new Audio(url);
     tempAudio.addEventListener('loadedmetadata', () => {
       setDuration(tempAudio.duration);
-      setMasterTrack({ url, fileName: file.name, duration: tempAudio.duration });
+      setMasterTrack({ url, fileName: file.name, duration: tempAudio.duration, isEmbedded: false });
       const spacing = tempAudio.duration / sectionCount;
       setSectionTimestamps(Array.from({ length: sectionCount }, (_, i) => ({ sectionIndex: i, time: i * spacing })));
+      setIsReady(true);
     });
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
     const audio = new Audio(url);
@@ -61,10 +85,15 @@ export function useAudioManager(sectionCount: number) {
     audioRef.current = audio;
   }, [masterTrack, sectionCount, volume]);
 
+  // Load from an embedded URL (public folder)
+  const loadEmbeddedTrack = useCallback(() => {
+    initAudioFromUrl('/show-mix.mp3', 'show-mix.mp3', true);
+  }, [initAudioFromUrl]);
+
   const removeMasterTrack = useCallback(() => {
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
-    if (masterTrack?.url) URL.revokeObjectURL(masterTrack.url);
-    setMasterTrack(null); setDuration(0); setCurrentTime(0); setIsPlaying(false);
+    if (masterTrack?.url && !masterTrack.isEmbedded) URL.revokeObjectURL(masterTrack.url);
+    setMasterTrack(null); setDuration(0); setCurrentTime(0); setIsPlaying(false); setIsReady(false);
   }, [masterTrack]);
 
   const play = useCallback(() => {
@@ -113,7 +142,8 @@ export function useAudioManager(sectionCount: number) {
 
   return {
     masterTrack, sectionTimestamps, isPlaying, currentTime, duration,
-    volume, currentSectionIndex, loadMasterTrack, removeMasterTrack,
+    volume, currentSectionIndex, isReady,
+    loadMasterTrack, loadEmbeddedTrack, removeMasterTrack,
     play, pause, stop, seekTo, seekToSection, updateTimestamp,
     togglePlayPause, setVolume, setCurrentSectionIndex,
   };

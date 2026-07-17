@@ -21,7 +21,7 @@ export interface ScriptLine {
   mediaCaption?: string;
 }
 
-export const SHOW_TITLE = "MR CHAPS' DANCE MASTERCLASS";
+export const SHOW_TITLE = "DANCE MASTERCLASS";
 export const SHOW_SUBTITLE = "SHOW 3 // BAR BOMBAY // SYDNEY";
 
 // Official default timestamps for each section (in seconds).
@@ -50,18 +50,11 @@ export const showSections: ShowSection[] = [
     subtitle: 'The Disgusted Entrance',
     bpm: 106,
     defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[0],
-    backingTrack: 'Zindagi Meri Dance (Instrumental)',
+    backingTrack: 'Zindagi Meri Dance',
     triggerColor: 'from-pink-600 to-rose-700',
     script: [
-      { speaker: 'STAGE', text: 'Lights down. The Zindagi Meri Dance instrumental begins pumping at 106 BPM. Mr Chaps struts onto stage already dancing — full commitment, maximum energy.', style: 'action' },
-      { speaker: 'STAGE', text: 'He freezes. Looks out at the audience with visible disgust. Wipes a single imaginary tear.', style: 'action' },
-      { speaker: 'MR CHAPS', text: 'Stop. Just... stop the music.', style: 'dialogue' },
-      { speaker: 'STAGE', text: 'Music cuts. Silence. He stares at the audience.', style: 'action' },
-      { speaker: 'MR CHAPS', text: "Oh, Sydney. I am... shook. And not in the 'I just saw Hrithik at the gym' way.", style: 'dialogue' },
-      { speaker: 'MR CHAPS', text: "Tell me something. Is this a dance floor? Or are we all queuing for the RTA in Parramatta?", style: 'dialogue' },
-      { speaker: 'MR CHAPS', text: "I see sequins. I see leather. I see that one uncle who thinks he's still 24 — respect, uncle, we all have that uncle. But do I see movement? No.", style: 'dialogue' },
-      { speaker: 'MR CHAPS', text: "You're all standing there like the Wi-Fi just cut out mid-episode. Meanwhile I'm up here doing all the cardio for both of us. Unacceptable.", style: 'dialogue' },
-      { speaker: 'MR CHAPS', text: "So here's what's going to happen. I'm going to teach you. Yes, you. The person in the back pretending to text. I see you. We're doing this.", style: 'dialogue' },
+      { speaker: 'STAGE', text: 'Lights down. Instrumental musi begins pumping at 106 BPM. Mr Chaps struts onto stage already dancing. He freezes. Looks out at the audience with visible disgust.', style: 'action' },
+      { speaker: 'MR CHAPS', text: 'Stop. Stop! Oh, Sydney, no. I am SHOOK, and not in a good way. I see sequins, I see mesh, I see leather, but I don\'t see any ACTION! Unacceptable. Is this a dance floor or a queue for the last bus to Harris Park? Darling, the bus is HERE. And I\'m the driver.', style: 'dialogue' },
     ]
   },
   {
@@ -74,11 +67,11 @@ export const showSections: ShowSection[] = [
     backingTrack: 'Zindagi Meri Dance (Instrumental)',
     triggerColor: 'from-violet-600 to-purple-700',
     script: [
-      { speaker: 'MR CHAPS', text: "But I can't do this alone. I'm a star, not a saint. So I brought some help.", style: 'dialogue' },
+      { speaker: 'MR CHAPS', text: "So here's what's gonna happen. I'm gonna teach you some moves so you can dance along. But I can't do this alone. Where's my assistant?", style: 'dialogue' },
       { speaker: 'STAGE', text: 'Backup dancers enter — striking a pose mid-stage.', style: 'action' },
-      { speaker: 'MR CHAPS', text: "Wait. Wait wait wait. Are you three the backup dancers?", style: 'dialogue' },
-      { speaker: 'STAGE', text: 'They nod confidently.', style: 'action' },
-      { speaker: 'MR CHAPS', text: "Then back. The fuck. Up. You're crowding my aura. This is my moment. Go to the back of the stage and don't come forward until you look at least half as expensive as I do.", style: 'dialogue' },
+      { speaker: 'DANCER 1', text: "Hi, darling. I want to dance with you.", style: 'dialogue' },
+      { speaker: 'DANCER 2', text: "Dance. Dance of love. Dance on the moon.", style: 'dialogue' },
+      { speaker: 'MR CHAPS', text: "Your first lesson, arms out.", style: 'dialogue' },
       { speaker: 'STAGE', text: 'Dancers dramatically retreat to the back, playing along.', style: 'action' },
       { speaker: 'MR CHAPS', text: "Good. Much better. Now — who here actually knows how to dance? Be honest. No? Perfect. Fresh clay. Let's mould you.", style: 'dialogue' },
       { speaker: 'MR CHAPS', text: "We're not doing boring choreography tonight. We're doing hook steps. The iconic ones. The ones your aunties do at weddings after three glasses of mango lassi. The ones that say 'I know this song and I am the main character right now.'", style: 'dialogue' },

@@ -19,7 +19,7 @@ function App() {
     volume, currentSectionIndex, isReady,
     loadMasterTrack, loadEmbeddedTrack, removeMasterTrack,
     play, pause, stop, seekTo, seekToSection, updateTimestamp,
-    togglePlayPause, setVolume,
+    togglePlayPause, setVolume, resetTimestamps,
   } = useAudioManager(showSections.length);
 
   const [manualSectionIndex, setManualSectionIndex] = useState<number | null>(null);
@@ -294,6 +294,7 @@ function App() {
           onSeekToSection={(index: number) => { setManualSectionIndex(index); seekToSection(index); }}
           onUpdateTimestamp={updateTimestamp}
           onSetVolume={setVolume}
+          onResetTimestamps={resetTimestamps}
         />
       </div>
     </div>

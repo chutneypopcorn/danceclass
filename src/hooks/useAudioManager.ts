@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { DEFAULT_SECTION_TIMESTAMPS } from '../data/showData';
 
 export interface SectionTimestamp {
   sectionIndex: number;
@@ -13,10 +14,11 @@ export function useAudioManager(sectionCount: number) {
     isEmbedded: boolean;
   } | null>(null);
 
+  // Initialize timestamps from the locked-in defaults
   const [sectionTimestamps, setSectionTimestamps] = useState<SectionTimestamp[]>(() =>
     Array.from({ length: sectionCount }, (_, i) => ({
       sectionIndex: i,
-      time: i * 90,
+      time: DEFAULT_SECTION_TIMESTAMPS[i] ?? i * 90,
     }))
   );
 
@@ -47,14 +49,44 @@ export function useAudioManager(sectionCount: number) {
     setCurrentSectionIndex(section);
   }, [currentTime, sectionTimestamps, isPlaying]);
 
+  // Reset all timestamps back to the official defaults
+  const resetTimestamps = useCallback(() => {
+    setSectionTimestamps(
+      Array.from({ length: sectionCount }, (_, i) => ({
+        sectionIndex: i,
+        time: DEFAULT_SECTION_TIMESTAMPS[i] ?? i * 90,
+      }))
+    );
+  }, [sectionCount]);
+
+  // Compute timestamps from an even distribution across track duration
+  const computeTimestampsFromDuration = useCallback((totalDuration: number) => {
+    const spacing = totalDuration / sectionCount;
+    return Array.from({ length: sectionCount }, (_, i) => ({
+      sectionIndex: i,
+      time: i * spacing,
+    }));
+  }, [sectionCount]);
+
   // Initialize audio element from a URL string
   const initAudioFromUrl = useCallback((url: string, fileName: string, isEmbedded: boolean) => {
     const tempAudio = new Audio(url);
     tempAudio.addEventListener('loadedmetadata', () => {
       setDuration(tempAudio.duration);
       setMasterTrack({ url, fileName, duration: tempAudio.duration, isEmbedded });
-      const spacing = tempAudio.duration / sectionCount;
-      setSectionTimestamps(Array.from({ length: sectionCount }, (_, i) => ({ sectionIndex: i, time: i * spacing })));
+      // Use defaults if available, otherwise auto-distribute
+      const hasDefaults = DEFAULT_SECTION_TIMESTAMPS.length >= sectionCount &&
+        DEFAULT_SECTION_TIMESTAMPS.every(t => t >= 0 && t <= tempAudio.duration);
+      if (hasDefaults) {
+        setSectionTimestamps(
+          Array.from({ length: sectionCount }, (_, i) => ({
+            sectionIndex: i,
+            time: DEFAULT_SECTION_TIMESTAMPS[i],
+          }))
+        );
+      } else {
+        setSectionTimestamps(computeTimestampsFromDuration(tempAudio.duration));
+      }
       setIsReady(true);
     });
     tempAudio.addEventListener('error', () => {
@@ -65,7 +97,7 @@ export function useAudioManager(sectionCount: number) {
     const audio = new Audio(url);
     audio.volume = volume;
     audioRef.current = audio;
-  }, [sectionCount, volume]);
+  }, [sectionCount, volume, computeTimestampsFromDuration]);
 
   // Load from a File object (user upload)
   const loadMasterTrack = useCallback((file: File) => {
@@ -75,15 +107,15 @@ export function useAudioManager(sectionCount: number) {
     tempAudio.addEventListener('loadedmetadata', () => {
       setDuration(tempAudio.duration);
       setMasterTrack({ url, fileName: file.name, duration: tempAudio.duration, isEmbedded: false });
-      const spacing = tempAudio.duration / sectionCount;
-      setSectionTimestamps(Array.from({ length: sectionCount }, (_, i) => ({ sectionIndex: i, time: i * spacing })));
+      // For user uploads, always auto-distribute (we don't know if defaults match)
+      setSectionTimestamps(computeTimestampsFromDuration(tempAudio.duration));
       setIsReady(true);
     });
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
     const audio = new Audio(url);
     audio.volume = volume;
     audioRef.current = audio;
-  }, [masterTrack, sectionCount, volume]);
+  }, [masterTrack, volume, computeTimestampsFromDuration]);
 
   // Load from an embedded URL (public folder)
   const loadEmbeddedTrack = useCallback(() => {
@@ -146,5 +178,6 @@ export function useAudioManager(sectionCount: number) {
     loadMasterTrack, loadEmbeddedTrack, removeMasterTrack,
     play, pause, stop, seekTo, seekToSection, updateTimestamp,
     togglePlayPause, setVolume, setCurrentSectionIndex,
+    resetTimestamps,
   };
 }

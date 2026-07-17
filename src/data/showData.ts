@@ -69,7 +69,7 @@ export const showSections: ShowSection[] = [
     script: [
       { speaker: 'MR CHAPS', text: "So here's what's gonna happen. I'm gonna teach you some moves so you can dance along. But I can't do this alone. Where's my assistant?", style: 'dialogue' },
       { speaker: 'STAGE', text: 'Backup dancers enter one at a time - striking a pose mid-stage.', style: 'action' },
-      { speaker: 'DANCER 1', text: "Hi, dar ling. I want to dance with you.", style: 'dialogue' },
+      { speaker: 'DANCER 1', text: "Hi, darling. I want to dance with you.", style: 'dialogue' },
       { speaker: 'DANCER 2', text: "Dance. Dance of love. Dance on the moon.", style: 'dialogue' },
       { speaker: 'MR CHAPS', text: "Your first lesson, arms out.", style: 'dialogue' },
     ]

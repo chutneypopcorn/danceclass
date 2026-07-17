@@ -29,17 +29,17 @@ export const SHOW_SUBTITLE = "SHOW 3 // BAR BOMBAY // SYDNEY";
 // Update these values to match your actual pre-mixed track timing,
 // then commit and push so everyone gets the same defaults.
 export const DEFAULT_SECTION_TIMESTAMPS: number[] = [
-  0,      // 00 - INTRO
-  75,     // 01 - BACKUP
-  180,    // 02 - KALA CHASHMA
-  300,    // 03 - WHAT JHUMKA
-  420,    // 04 - EK PAL KA JEENA
-  540,    // 05 - SHAVA SHAVA
-  660,    // 06 - PIYA PIYA
-  780,    // 07 - THE RETIREMENT
-  900,    // 08 - THE FRENZY
-  1200,   // 09 - AKASH NUMBER
-  1500,   // 10 - ASHA BHOSLE FINALE
+  0,    // 00 - INTRO          (00:00)
+  45,   // 01 - BACKUP         (00:45)
+  71,   // 02 - KALA CHASHMA   (01:11)
+  111,  // 03 - WHAT JHUMKA    (01:51)
+  145,  // 04 - EK PAL KA JEENA (02:25)
+  170,  // 05 - SHAVA SHAVA    (02:50)
+  195,  // 06 - PIYA PIYA      (03:15)
+  215,  // 07 - THE RETIREMENT  (03:35)
+  230,  // 08 - THE FRENZY     (03:50)
+  260,  // 09 - AKASH NUMBER   (04:20)
+  285,  // 10 - ASHA BHOSLE FINALE (04:45)
 ];
 
 export const showSections: ShowSection[] = [

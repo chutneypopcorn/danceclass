@@ -4,6 +4,7 @@ export interface ShowSection {
   title: string;
   subtitle: string;
   bpm: number;
+  defaultTimestamp: number;
   script: ScriptLine[];
   song?: string;
   songNote?: string;
@@ -20,6 +21,24 @@ export interface ScriptLine {
 export const SHOW_TITLE = "MR CHAPS' DANCE MASTERCLASS";
 export const SHOW_SUBTITLE = "SHOW 3 // BAR BOMBAY // SYDNEY";
 
+// Official default timestamps for each section (in seconds).
+// These are the locked-in defaults that ship with the show.
+// Update these values to match your actual pre-mixed track timing,
+// then commit and push so everyone gets the same defaults.
+export const DEFAULT_SECTION_TIMESTAMPS: number[] = [
+  0,      // 00 - INTRO
+  75,     // 01 - BACKUP
+  180,    // 02 - KALA CHASHMA
+  300,    // 03 - WHAT JHUMKA
+  420,    // 04 - EK PAL KA JEENA
+  540,    // 05 - SHAVA SHAVA
+  660,    // 06 - PIYA PIYA
+  780,    // 07 - THE RETIREMENT
+  900,    // 08 - THE FRENZY
+  1200,   // 09 - AKASH NUMBER
+  1500,   // 10 - ASHA BHOSLE FINALE
+];
+
 export const showSections: ShowSection[] = [
   {
     id: 'intro',
@@ -27,6 +46,7 @@ export const showSections: ShowSection[] = [
     title: 'INTRO',
     subtitle: 'The Disgusted Entrance',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[0],
     backingTrack: 'Zindagi Meri Dance (Instrumental)',
     triggerColor: 'from-pink-600 to-rose-700',
     script: [
@@ -47,6 +67,7 @@ export const showSections: ShowSection[] = [
     title: 'BACKUP',
     subtitle: 'The Dancer Introduction',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[1],
     backingTrack: 'Zindagi Meri Dance (Instrumental)',
     triggerColor: 'from-violet-600 to-purple-700',
     script: [
@@ -67,6 +88,7 @@ export const showSections: ShowSection[] = [
     title: 'KALA CHASHMA',
     subtitle: 'The Ignorance Is Bliss',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[2],
     backingTrack: 'Zindagi Meri Dance → Kala Chashma blend',
     song: 'Kala Chashma',
     songNote: 'Chorus x2 — audience dances along',
@@ -88,6 +110,7 @@ export const showSections: ShowSection[] = [
     title: 'WHAT JHUMKA',
     subtitle: 'The Rich Aunty Energy',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[3],
     backingTrack: 'Zindagi Meri Dance → What Jhumka blend',
     song: 'What Jhumka',
     songNote: 'Chorus x2 — audience dances along',
@@ -110,6 +133,7 @@ export const showSections: ShowSection[] = [
     title: 'EK PAL KA JEENA',
     subtitle: 'The Hrithik Special',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[4],
     backingTrack: 'Zindagi Meri Dance → Ek Pal Ka Jeena blend',
     song: 'Ek Pal Ka Jeena',
     songNote: 'Chorus x2 — audience dances along',
@@ -131,6 +155,7 @@ export const showSections: ShowSection[] = [
     title: 'SHAVA SHAVA',
     subtitle: 'The Wedding Classic',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[5],
     backingTrack: 'Zindagi Meri Dance → Shava Shava blend',
     song: 'Say Shava Shava',
     songNote: 'Chorus x2 — audience dances along',
@@ -152,6 +177,7 @@ export const showSections: ShowSection[] = [
     title: 'PIYA PIYA',
     subtitle: 'The South Indian Surprise',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[6],
     backingTrack: 'Zindagi Meri Dance → Piya Piya blend',
     song: 'Piya Piya O Piya',
     songNote: 'Chorus x2 — audience dances along',
@@ -173,6 +199,7 @@ export const showSections: ShowSection[] = [
     title: 'THE RETIREMENT',
     subtitle: 'Passing The Torch',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[7],
     backingTrack: 'Zindagi Meri Dance (Instrumental)',
     triggerColor: 'from-slate-500 to-gray-600',
     script: [
@@ -192,6 +219,7 @@ export const showSections: ShowSection[] = [
     title: 'THE FRENZY',
     subtitle: 'Maximum Overdrive',
     bpm: 140,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[8],
     backingTrack: 'Fast medley at 1.5x speed',
     triggerColor: 'from-red-600 to-rose-700',
     script: [
@@ -217,6 +245,7 @@ export const showSections: ShowSection[] = [
     title: 'AKASH NUMBER',
     subtitle: 'Special Guest Performance',
     bpm: 120,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[9],
     backingTrack: 'TBD — Akash to choose',
     triggerColor: 'from-indigo-500 to-blue-600',
     script: [
@@ -235,6 +264,7 @@ export const showSections: ShowSection[] = [
     title: 'ASHA BHOSLE FINALE',
     subtitle: 'The Celebration Continues',
     bpm: 106,
+    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[10],
     backingTrack: 'Asha Bhosle medley mix',
     triggerColor: 'from-fuchsia-600 to-pink-700',
     script: [

@@ -414,19 +414,31 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
 
   const getSpeakerColor = (speaker: string) => {
     switch (speaker) {
-      case 'MR CHAPS': return 'text-pink-400';
-      case 'STAGE': return 'text-zinc-500';
-      case 'NOTE': return 'text-amber-500';
-      default: return 'text-zinc-400';
+      case 'MR CHAPS':
+      case 'DANCER 1':
+      case 'DANCER 2':
+        return 'text-pink-400';
+      case 'STAGE':
+        return 'text-zinc-500';
+      case 'NOTE':
+        return 'text-amber-500';
+      default:
+        return 'text-zinc-400';
     }
   };
 
   const getSpeakerIcon = (speaker: string) => {
     switch (speaker) {
-      case 'MR CHAPS': return <Mic2 className="w-4 h-4" />;
-      case 'STAGE': return <Sparkles className="w-4 h-4" />;
-      case 'NOTE': return <Volume2 className="w-4 h-4" />;
-      default: return <Music className="w-4 h-4" />;
+      case 'MR CHAPS':
+      case 'DANCER 1':
+      case 'DANCER 2':
+        return <Mic2 className="w-4 h-4" />;
+      case 'STAGE':
+        return <Sparkles className="w-4 h-4" />;
+      case 'NOTE':
+        return <Volume2 className="w-4 h-4" />;
+      default:
+        return <Music className="w-4 h-4" />;
     }
   };
 

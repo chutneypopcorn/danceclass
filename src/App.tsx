@@ -79,11 +79,23 @@ function App() {
   const currentSection: ShowSection = showSections[effectiveSectionIndex];
 
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const mobilePillsRef = useRef<HTMLDivElement>(null);
 
   // Try to load embedded track on mount
   useEffect(() => {
     loadEmbeddedTrack();
   }, [loadEmbeddedTrack]);
+
+  // Auto-scroll mobile section pills to keep current section visible
+  useEffect(() => {
+    if (!isMobile || !mobilePillsRef.current) return;
+    const activePill = mobilePillsRef.current.querySelector(
+      `[data-section-index="${effectiveSectionIndex}"]`,
+    ) as HTMLElement;
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [effectiveSectionIndex, isMobile]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -230,7 +242,7 @@ function App() {
   const progressPercent =
     masterTrack && duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  // ---- Shared trigger pad renderer ----
+  // ---- Desktop trigger pad renderer ----
   const TriggerPad = ({
     section,
     index,
@@ -411,29 +423,6 @@ function App() {
         </div>
       </div>
 
-      {/* ====== MOBILE: Section header bar ====== */}
-      {isMobile && (
-        <div className="shrink-0 px-3 py-2 bg-zinc-900/50 border-b border-zinc-800 flex items-center gap-3">
-          <span className="text-xl font-black text-pink-500">
-            {currentSection.number}
-          </span>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-bold text-white truncate">
-              {currentSection.title}
-            </h2>
-            <p className="text-[10px] text-zinc-500 truncate">
-              {currentSection.subtitle}
-            </p>
-          </div>
-          {masterTrack && (
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-zinc-800 text-[10px] font-mono text-zinc-400 shrink-0">
-              <Headphones className="w-2.5 h-2.5 text-pink-400" />
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* ====== MAIN CONTENT ====== */}
       <div className="flex flex-1 min-h-0">
         {/* Desktop: TELEPROMPTER */}
@@ -549,24 +538,119 @@ function App() {
           </div>
         )}
 
-        {/* Mobile: FULL-WIDTH TRIGGER PADS (no script) */}
+        {/* ====== MOBILE: SCRIPT + SLIM SECTION PILLS ====== */}
         {isMobile && (
-          <div className="flex-1 bg-zinc-900 flex flex-col min-w-0 overflow-hidden">
-            <div className="px-3 py-2 border-b border-zinc-800 shrink-0 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-pink-400" />
-              <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">
-                Trigger Pads
-              </span>
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            {/* Slim horizontal scrollable section pills */}
+            <div
+              ref={mobilePillsRef}
+              className="shrink-0 flex gap-1.5 px-3 py-2 overflow-x-auto bg-zinc-900 border-b border-zinc-800 scrollbar-hide"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {showSections.map((section, index) => {
+                const isActive = index === effectiveSectionIndex;
+                const isCurrentlyPlaying =
+                  index === currentSectionIndex && isPlaying && !manualSectionIndex;
+                return (
+                  <button
+                    key={section.id}
+                    data-section-index={index}
+                    onClick={() => goToSection(index)}
+                    className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      isActive
+                        ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/20"
+                        : "bg-zinc-800 text-zinc-500"
+                    }`}
+                  >
+                    <span>{section.number}</span>
+                    {isCurrentlyPlaying && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
-              {showSections.map((section, index) => (
-                <TriggerPad key={section.id} section={section} index={index} />
-              ))}
-            </div>
-            <div className="px-3 py-2 border-t border-zinc-800 shrink-0">
-              <div className="text-[10px] text-zinc-600 text-center">
-                <p>Swipe to scroll &bull; Tap a pad to jump</p>
+
+            {/* Current section header */}
+            <div className="shrink-0 px-4 py-2 bg-zinc-900/50 border-b border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <h2 className="text-base font-bold text-white truncate">
+                    {currentSection.number} — {currentSection.title}
+                  </h2>
+                  <p className="text-[11px] text-zinc-500 truncate">
+                    {currentSection.subtitle}
+                    {masterTrack && (
+                      <span className="ml-2 font-mono text-zinc-600">
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 ml-2">
+                  <button
+                    onClick={prevSection}
+                    disabled={effectiveSectionIndex === 0}
+                    className="p-2 rounded-lg bg-zinc-800 text-zinc-400 disabled:opacity-30"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={nextSection}
+                    disabled={effectiveSectionIndex === showSections.length - 1}
+                    className="p-2 rounded-lg bg-zinc-800 text-zinc-400 disabled:opacity-30"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+            </div>
+
+            {/* Script content (teleprompter) */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+              <div className="space-y-4">
+                {currentSection.script.map((line, i) => (
+                  <ScriptLineRenderer
+                    key={i}
+                    line={line}
+                    isPlaying={isPlaying}
+                    currentTime={currentTime}
+                    sectionStartTime={
+                      sectionTimestamps.find(
+                        (t) => t.sectionIndex === effectiveSectionIndex,
+                      )?.time ?? 0
+                    }
+                  />
+                ))}
+                {currentSection.song && (
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-pink-500/10 to-rose-500/10 border border-pink-500/20">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Music className="w-4 h-4 text-pink-400" />
+                      <span className="text-xs font-bold text-pink-400 tracking-wider uppercase">
+                        SONG
+                      </span>
+                    </div>
+                    <p className="text-base font-bold text-white">
+                      {currentSection.song}
+                    </p>
+                    {currentSection.songNote && (
+                      <p className="text-sm text-pink-300/70 mt-1">
+                        {currentSection.songNote}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bottom nav bar */}
+            <div className="shrink-0 px-3 py-2 bg-zinc-900 border-t border-zinc-800 flex items-center justify-between">
+              <span className="text-[10px] text-zinc-600 font-medium">
+                {effectiveSectionIndex + 1} / {showSections.length}
+              </span>
+              <span className="text-[10px] text-zinc-600">
+                Tap a pill to jump &bull; Swipe to scroll
+              </span>
             </div>
           </div>
         )}

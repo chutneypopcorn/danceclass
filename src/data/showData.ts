@@ -103,26 +103,6 @@ export const showSections: ShowSection[] = [
     ],
   },
   {
-    id: "hook-step-note",
-    number: "01a",
-    title: "HOOK STEP REFERENCE",
-    subtitle: "Reference Video",
-    bpm: 106,
-    defaultTimestamp: DEFAULT_SECTION_TIMESTAMPS[1],
-    backingTrack: "Instrumental Music",
-    triggerColor: "from-gray-500 to-gray-600",
-    script: [
-      {
-        speaker: "NOTE",
-        text: "Watch this reference video for the hook step",
-        style: "note",
-        mediaUrl: "https://www.youtube.com/watch?v=a_91rYYr0s8",
-        mediaType: "video",
-        mediaCaption: "Hook step tutorial",
-      },
-    ],
-  },
-  {
     id: "shava",
     number: "02",
     title: "SHAVA SHAVA",
@@ -134,6 +114,14 @@ export const showSections: ShowSection[] = [
     songNote: "Chorus x1 — audience dances along",
     triggerColor: "from-amber-500 to-orange-600",
     script: [
+      {
+        speaker: "NOTE",
+        text: "Watch this reference video for the hook step",
+        style: "note",
+        mediaUrl: "/videos/shava-shava.mp4",
+        mediaType: "video",
+        mediaCaption: "Hook step tutorial",
+      },
       {
         speaker: "MR CHAPS",
         text: "One more time. Cross your arms, pump your fist. Slash, slash. Toot, toot. Five, six, seven, eight.'",

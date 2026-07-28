@@ -469,7 +469,17 @@ function App() {
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
               <div className="space-y-6 max-w-4xl">
                 {currentSection.script.map((line, i) => (
-                  <ScriptLineRenderer key={i} line={line} />
+                  <ScriptLineRenderer
+                    key={i}
+                    line={line}
+                    isPlaying={isPlaying}
+                    currentTime={currentTime}
+                    sectionStartTime={
+                      sectionTimestamps.find(
+                        (t) => t.sectionIndex === effectiveSectionIndex,
+                      )?.time ?? 0
+                    }
+                  />
                 ))}
                 {currentSection.song && (
                   <div className="p-4 rounded-xl bg-gradient-to-r from-pink-500/10 to-rose-500/10 border border-pink-500/20">
@@ -588,8 +598,45 @@ function App() {
   );
 }
 
-/** Renders a single script line with optional media embed */
-function ScriptLineRenderer({ line }: { line: ScriptLine }) {
+/** Props for ScriptLineRenderer — includes audio sync state */
+interface ScriptLineRendererProps {
+  line: ScriptLine;
+  isPlaying: boolean;
+  currentTime: number;
+  sectionStartTime: number;
+}
+
+/** Renders a single script line with optional media embed synced to audio */
+function ScriptLineRenderer({
+  line,
+  isPlaying,
+  currentTime,
+  sectionStartTime,
+}: ScriptLineRendererProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Sync video playback to master audio track
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const relativeTime = Math.max(0, currentTime - sectionStartTime);
+
+    // Seek if we're more than half a second off (avoids fighting smooth playback)
+    if (Math.abs(video.currentTime - relativeTime) > 0.5) {
+      video.currentTime = relativeTime;
+    }
+
+    if (isPlaying) {
+      video.play().catch(() => {
+        // Autoplay may be blocked until user interacts — that's fine,
+        // the next effect run after interaction will succeed
+      });
+    } else {
+      video.pause();
+    }
+  }, [isPlaying, currentTime, sectionStartTime]);
+
   const getLineStyle = (style: string) => {
     switch (style) {
       case "dialogue":
@@ -641,6 +688,11 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
       ? getYouTubeEmbedUrl(line.mediaUrl)
       : null;
 
+  // Add autoplay params to YouTube embed when show is playing
+  const youTubeSrc = youtubeEmbedUrl
+    ? `${youtubeEmbedUrl}?autoplay=${isPlaying ? 1 : 0}&mute=1&playsinline=1`
+    : null;
+
   return (
     <div className="p-4 rounded-xl hover:bg-zinc-800/40 transition-all">
       <div
@@ -669,12 +721,12 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
         </div>
       )}
 
-      {/* Video embed — YouTube gets iframe, direct files get video tag */}
-      {line.mediaUrl && line.mediaType === "video" && youtubeEmbedUrl && (
+      {/* Video embed — YouTube gets iframe, direct files get synced video tag */}
+      {line.mediaUrl && line.mediaType === "video" && youTubeSrc && (
         <div className="mt-3">
           <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
             <iframe
-              src={youtubeEmbedUrl}
+              src={youTubeSrc}
               title={line.mediaCaption || line.text}
               className="absolute inset-0 w-full h-full rounded-lg border border-zinc-700/50"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -692,10 +744,13 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
       {line.mediaUrl && line.mediaType === "video" && !youtubeEmbedUrl && (
         <div className="mt-3">
           <video
+            ref={videoRef}
             src={line.mediaUrl}
-            controls
+            muted
+            loop
+            playsInline
             className="rounded-lg max-h-64 w-full border border-zinc-700/50"
-            preload="metadata"
+            preload="auto"
           />
           {line.mediaCaption && (
             <p className="text-[10px] text-zinc-500 mt-1 flex items-center gap-1">

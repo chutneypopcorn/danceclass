@@ -21,6 +21,12 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
+/** Extract YouTube video ID and return embed URL, or null if not a YouTube link */
+function getYouTubeEmbedUrl(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+}
+
 function App() {
   const isMobile = useIsMobile(768);
   const [isShowLive, setIsShowLive] = useState(false);
@@ -370,7 +376,7 @@ function App() {
             </div>
             <div className="px-3 py-2 border-t border-zinc-800 shrink-0">
               <div className="text-[10px] text-zinc-600 text-center">
-                <p>Swipe to scroll • Tap a pad to jump</p>
+                <p>Swipe to scroll &bull; Tap a pad to jump</p>
               </div>
             </div>
           </div>
@@ -442,6 +448,11 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
     }
   };
 
+  // Check if video is a YouTube link
+  const youtubeEmbedUrl = line.mediaUrl && line.mediaType === 'video'
+    ? getYouTubeEmbedUrl(line.mediaUrl)
+    : null;
+
   return (
     <div className="p-4 rounded-xl hover:bg-zinc-800/40 transition-all">
       <div className={`flex items-center gap-2 mb-2 text-xs font-bold tracking-wider uppercase ${getSpeakerColor(line.speaker)}`}>
@@ -450,7 +461,7 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
       </div>
       <div className={getLineStyle(line.style)}>{line.text}</div>
 
-      {/* Media embed */}
+      {/* Image embed */}
       {line.mediaUrl && line.mediaType === 'image' && (
         <div className="mt-3">
           <img
@@ -467,7 +478,28 @@ function ScriptLineRenderer({ line }: { line: ScriptLine }) {
           )}
         </div>
       )}
-      {line.mediaUrl && line.mediaType === 'video' && (
+
+      {/* Video embed — YouTube gets iframe, direct files get video tag */}
+      {line.mediaUrl && line.mediaType === 'video' && youtubeEmbedUrl && (
+        <div className="mt-3">
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              src={youtubeEmbedUrl}
+              title={line.mediaCaption || line.text}
+              className="absolute inset-0 w-full h-full rounded-lg border border-zinc-700/50"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          {line.mediaCaption && (
+            <p className="text-[10px] text-zinc-500 mt-1 flex items-center gap-1">
+              <Film className="w-3 h-3" />
+              {line.mediaCaption}
+            </p>
+          )}
+        </div>
+      )}
+      {line.mediaUrl && line.mediaType === 'video' && !youtubeEmbedUrl && (
         <div className="mt-3">
           <video
             src={line.mediaUrl}

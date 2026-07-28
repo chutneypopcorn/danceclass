@@ -80,6 +80,7 @@ function App() {
 
   const progressBarRef = useRef<HTMLDivElement>(null);
   const mobilePillsRef = useRef<HTMLDivElement>(null);
+  const scriptScrollRef = useRef<HTMLDivElement>(null);
 
   // Try to load embedded track on mount
   useEffect(() => {
@@ -96,6 +97,13 @@ function App() {
       activePill.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
   }, [effectiveSectionIndex, isMobile]);
+
+  // Auto-scroll script viewport to top whenever section changes
+  useEffect(() => {
+    if (scriptScrollRef.current) {
+      scriptScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [effectiveSectionIndex]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -455,7 +463,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+            <div ref={scriptScrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-6">
               <div className="space-y-6 max-w-4xl">
                 {currentSection.script.map((line, i) => (
                   <ScriptLineRenderer
@@ -607,7 +615,7 @@ function App() {
             </div>
 
             {/* Script content (teleprompter) */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+            <div ref={scriptScrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4">
               <div className="space-y-4">
                 {currentSection.script.map((line, i) => (
                   <ScriptLineRenderer
